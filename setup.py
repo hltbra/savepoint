@@ -69,5 +69,7 @@ other side effects of the block.
     zip_safe=False,
     install_requires=install_requires,
     entry_points={
-    }
+    },
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
 )
