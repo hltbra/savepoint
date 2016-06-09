@@ -48,3 +48,15 @@ def test_should_skip_code_if_state_changes(test_file):
     fn()
     fn()
     assert counter == [1]
+
+
+def test_should_not_skip_code_if_body_raises_exception(test_file):
+    counter = []
+    state = {}
+    def fn():
+        with SavePoint(test_file, state):
+            raise ValueError("boom!")
+            state['changed'] = True
+    pytest.raises(ValueError, fn)
+    pytest.raises(ValueError, fn)
+    pytest.raises(ValueError, fn)

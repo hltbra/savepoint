@@ -11,6 +11,7 @@ class SavePoint(object):
         # where we'll store the modified scope
         self.path = path
         self.state = state
+        self.replaying = False
 
     def __enter__(self):
         caller = inspect.currentframe(1)
@@ -24,6 +25,7 @@ class SavePoint(object):
             # skip `with` body (http://stackoverflow.com/a/12594789/807118)
             sys.settrace(lambda *args, **keys: None)
             caller.f_trace = self.trace
+            self.replaying = True
 
         # store the original scope, so we'll store only the diff when we leave
         self.original_scope = copy.deepcopy(self.state)
@@ -43,4 +45,5 @@ class SavePoint(object):
             with open(self.path, 'w') as fp:
                 pickle.dump(updated, fp)
 
-        return True
+        if self.replaying:
+            return True
